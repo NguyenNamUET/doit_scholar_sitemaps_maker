@@ -8,4 +8,5 @@ MarkupSafe==1.1.1
 monotonic==1.5
 requests==2.24.0
 six==1.15.0
+tqdm==4.50.0
 urllib3==1.25.10

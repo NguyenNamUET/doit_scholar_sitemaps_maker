@@ -1,6 +1,7 @@
 from datetime import datetime
 import os
 import re
+from tqdm import tqdm
 from jinja2 import Template
 
 from helpers.utilities import store_gz, load_jsonl_from_gz, make_sitemap_paper_title
@@ -13,7 +14,7 @@ STORAGE_PATH = f"/home/nguyennam/Desktop/{FILE_VERSION}" #/storage/sitemaps
 
 def make_base_sitemap():
     base_sitemaps = {"pages":[], "changefreq":"monthly"}
-    for sitemap in os.listdir(PATH):
+    for sitemap in sorted(os.listdir(PATH)):
         loc = sitemap.replace("_","-paper-")
         base_sitemaps["pages"].append(f"http://51.210.251.250:3400/{loc}.xml.gz")
 
@@ -42,7 +43,7 @@ def make_sitemap_xml(sitemap_path):
             id = paper["paperId"]
             lastmod_date = datetime.now().strftime('%Y-%m-%d')
             base_sitemaps["pages"].append((f"http://51.210.251.250:3400/{title}.p-{id}", lastmod_date))
-    print(base_sitemaps)
+
     sitemap_template = '''<?xml version="1.0" encoding="UTF-8"?>
         <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
             {% for page in pages %}
@@ -64,5 +65,5 @@ def make_sitemap_xml(sitemap_path):
 
 if __name__ == '__main__':
     make_base_sitemap()
-    for sitemap in os.listdir(PATH):
+    for sitemap in tqdm(os.listdir(PATH), total=len(os.listdir(PATH))):
         make_sitemap_xml(sitemap)
