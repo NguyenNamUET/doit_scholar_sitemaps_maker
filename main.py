@@ -28,7 +28,7 @@ def make_base_sitemap():
     template = Template(sitemap_template)
     sitemap_output = template.render(base_sitemaps)
     # Write the File to Your Working Folder
-    store_gz(sitemap_output, f"{STORAGE_PATH}/sitemap_paper_index.xml.gz")
+    store_gz(sitemap_output, f"{STORAGE_PATH}/base_sitemap/sitemap_paper_index.xml.gz")
 
 
 def make_sitemap_xml(sitemap_path):
@@ -39,7 +39,7 @@ def make_sitemap_xml(sitemap_path):
             title = make_sitemap_paper_title(paper["title"])
             id = paper["paperId"]
             lastmod_date = datetime.datetime.now().strftime('%Y-%m-%d')
-            base_sitemaps["pages"].append((f"http://51.210.251.250:3400/{title}.p-{id}.xml.gz", lastmod_date))
+            base_sitemaps["pages"].append((f"http://51.210.251.250:3400/{title}.p-{id}", lastmod_date))
     print(base_sitemaps)
     sitemap_template = '''<?xml version="1.0" encoding="UTF-8"?>
         <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -49,16 +49,18 @@ def make_sitemap_xml(sitemap_path):
                 <lastmod>{{page[1]}}</lastmod>
                 <priority>{{priority}}</priority>
                 <changefreq>{{changefreq}}</changefreq>    
-            </sitemap>
+            </url>
             {% endfor %}
-        </sitemapindex>'''
+        </urlset>'''
 
     template = Template(sitemap_template)
     sitemap_output = template.render(base_sitemaps)
     # Write the File to Your Working Folder
     id = re.findall("\d+", sitemap_path)[0]
-    store_gz(sitemap_output, f"{STORAGE_PATH}/sitemap-paper-{id}.xml.gz")
+    store_gz(sitemap_output, f"{STORAGE_PATH}/paper_sitemaps/sitemap-paper-{id}.xml.gz")
 
 
 if __name__ == '__main__':
-    make_sitemap_xml("sitemap_0000000")
+    make_base_sitemap()
+    for sitemap in os.listdir(PATH):
+        make_sitemap_xml(sitemap)
