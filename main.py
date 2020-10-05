@@ -1,12 +1,14 @@
-import datetime
+from datetime import datetime
 import os
 import re
 from jinja2 import Template
 
 from helpers.utilities import store_gz, load_jsonl_from_gz, make_sitemap_paper_title
 
-PATH = "/home/nguyennam/Downloads/data/20201005_234221"
-STORAGE_PATH = "/home/nguyennam/Desktop"
+VERSION = str(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+FILE_VERSION = str(VERSION)[:10].replace("-", "") + "_" + str(VERSION)[11:19].replace(":", "")
+PATH = "/home/nguyennam/Downloads/data/20201005_234221" #/storage/dataStorage/20200929_182515
+STORAGE_PATH = f"/home/nguyennam/Desktop/{FILE_VERSION}" #/storage/sitemaps
 
 
 def make_base_sitemap():
@@ -38,7 +40,7 @@ def make_sitemap_xml(sitemap_path):
             paper = load_jsonl_from_gz(os.path.join(PATH, sitemap_path, sitemap))
             title = make_sitemap_paper_title(paper["title"])
             id = paper["paperId"]
-            lastmod_date = datetime.datetime.now().strftime('%Y-%m-%d')
+            lastmod_date = datetime.now().strftime('%Y-%m-%d')
             base_sitemaps["pages"].append((f"http://51.210.251.250:3400/{title}.p-{id}", lastmod_date))
     print(base_sitemaps)
     sitemap_template = '''<?xml version="1.0" encoding="UTF-8"?>
